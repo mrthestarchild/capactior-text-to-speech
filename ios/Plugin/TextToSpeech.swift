@@ -53,6 +53,10 @@ import Capacitor
         let voice = AVSpeechSynthesisVoice(language: lang)
         return voice != nil
     }
+    
+    @objc public func isSpeaking() -> Bool {
+        return synthesizer.isSpeaking;
+    }
 
     // Adjust rate for a closer match to other platform.
     @objc private func adjustRate(_ rate: Float) -> Float {

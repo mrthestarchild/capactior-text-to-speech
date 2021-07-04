@@ -27,6 +27,11 @@ export interface TextToSpeechPlugin {
    * Only available for Android.
    */
   openInstall(): Promise<void>;
+
+  /**
+   * Determines if the text to speech is currnetly playing.
+   */
+  isSpeaking(): Promise<{isSpeaking: boolean | undefined }>;
 }
 
 export interface TTSOptions {

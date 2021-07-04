@@ -64,6 +64,11 @@ export class TextToSpeechWeb extends WebPlugin implements TextToSpeechPlugin {
     this.throwUnimplementedError();
   }
 
+  public async isSpeaking(): Promise<{ isSpeaking: boolean | undefined }> {
+    const speaking = this.speechSynthesis?.speaking;
+    return { isSpeaking: speaking }
+  }
+
   private createSpeechSynthesisUtterance(
     options: TTSOptions,
   ): SpeechSynthesisUtterance {
