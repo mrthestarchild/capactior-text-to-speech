@@ -141,6 +141,11 @@ public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListe
         return result == tts.LANG_AVAILABLE || result == tts.LANG_COUNTRY_AVAILABLE || result == tts.LANG_COUNTRY_VAR_AVAILABLE;
     }
 
+    public boolean isSpeaking() {
+        boolean result = tts.isSpeaking();
+        return result;
+    }
+
     public void onDestroy() {
         if (tts == null) {
             return;

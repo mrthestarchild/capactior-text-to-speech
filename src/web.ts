@@ -66,7 +66,7 @@ export class TextToSpeechWeb extends WebPlugin implements TextToSpeechPlugin {
 
   public async isSpeaking(): Promise<{ isSpeaking: boolean | undefined }> {
     const speaking = this.speechSynthesis?.speaking;
-    return { isSpeaking: speaking }
+    return { isSpeaking: speaking };
   }
 
   private createSpeechSynthesisUtterance(

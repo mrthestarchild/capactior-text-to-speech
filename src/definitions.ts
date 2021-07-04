@@ -31,7 +31,7 @@ export interface TextToSpeechPlugin {
   /**
    * Determines if the text to speech is currnetly playing.
    */
-  isSpeaking(): Promise<{isSpeaking: boolean | undefined }>;
+  isSpeaking(): Promise<{ isSpeaking: boolean | undefined }>;
 }
 
 export interface TTSOptions {

@@ -123,6 +123,14 @@ public class TextToSpeechPlugin extends Plugin {
         }
     }
 
+    @PluginMethod
+    public void isSpeaking(PluginCall call) {
+        boolean result = implementation.isSpeaking();
+        JSObject ret = new JSObject();
+        ret.put("isSpeaking", result);
+        call.resolve(ret);
+    }
+
     @Override
     protected void handleOnDestroy() {
         implementation.onDestroy();
