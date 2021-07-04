@@ -26,7 +26,7 @@ import Capacitor
             avAudioSessionCategory = AVAudioSession.Category.playback
         }
 
-        try AVAudioSession.sharedInstance().setCategory(avAudioSessionCategory, mode: .default, options: AVAudioSession.CategoryOptions.duckOthers)
+        try AVAudioSession.sharedInstance().setCategory(avAudioSessionCategory, mode: .default, options: [.duckOthers])
         try AVAudioSession.sharedInstance().setActive(true)
 
         self.calls.append(call)
