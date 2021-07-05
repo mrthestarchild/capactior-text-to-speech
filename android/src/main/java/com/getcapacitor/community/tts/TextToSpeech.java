@@ -2,13 +2,19 @@ package com.getcapacitor.community.tts;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.media.AudioFocusRequest;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.Voice;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
+
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import java.util.ArrayList;
@@ -24,6 +30,7 @@ public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListe
     private android.speech.tts.TextToSpeech tts = null;
     private int initializationStatus;
     private JSObject[] supportedVoices = null;
+
 
     TextToSpeech(Context context) {
         this.context = context;
@@ -48,20 +55,57 @@ public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListe
         String callbackId,
         SpeakResultCallback resultCallback
     ) {
+        AudioFocusRequest request = null;
+        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = i -> {};
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            request = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK).build();
+        }
+        AudioFocusRequest finalRequest = request;
+
         tts.stop();
         tts.setOnUtteranceProgressListener(
             new UtteranceProgressListener() {
                 @Override
-                public void onStart(String utteranceId) {}
+                public void onStart(String utteranceId) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        am.requestAudioFocus(finalRequest);
+                    }
+                    else {
+                        am.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+                    }
+                }
 
                 @Override
                 public void onDone(String utteranceId) {
                     resultCallback.onDone();
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        am.abandonAudioFocusRequest(finalRequest);
+                    }
+                    else {
+                        am.abandonAudioFocus(onAudioFocusChangeListener);
+                    }
                 }
 
                 @Override
                 public void onError(String utteranceId) {
                     resultCallback.onError();
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        am.abandonAudioFocusRequest(finalRequest);
+                    }
+                    else {
+                        am.abandonAudioFocus(onAudioFocusChangeListener);
+                    }
+                }
+
+                @Override
+                public void onStop(String utteranceId, boolean interrupted){
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        am.abandonAudioFocusRequest(finalRequest);
+                    }
+                    else {
+                        am.abandonAudioFocus(onAudioFocusChangeListener);
+                    }
                 }
             }
         );
